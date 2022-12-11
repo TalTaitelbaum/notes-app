@@ -1,3 +1,5 @@
+"use strict";
+
 //Read existing from localStorage; Read it, check it, parse it
 
 const getSavedNotes = () => {
@@ -52,7 +54,7 @@ const generateNoteDOM = (note) => {
 };
 
 //Sort your notes by one of three ways
-sortNotes = (notes, sortBy) => {
+const sortNotes = (notes, sortBy) => {
   if (sortBy === "byEdited") {
     return notes.sort((a, b) => {
       if (a.updatedAt > b.updatedAt) {
