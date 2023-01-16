@@ -27,18 +27,9 @@ const saveNotes = () => {
 //Generate the DOM structure for a new note
 
 const generateNoteDOM = (note) => {
-  const noteEl = document.createElement("div");
-  const textEL = document.createElement("a");
-  const button = document.createElement("button");
-
-  //Setup the remove note button
-  button.textContent = "X";
-  noteEl.appendChild(button);
-  button.addEventListener("click", () => {
-    removeNote(note.id);
-    saveNotes(notes);
-    renderNotes(notes, filters);
-  });
+  const noteEl = document.createElement("a");
+  const textEL = document.createElement("p");
+  const statusEl = document.createElement("p");
 
   //setup the note title text
   if (note.title.length > 0) {
@@ -46,9 +37,17 @@ const generateNoteDOM = (note) => {
   } else {
     textEL.textContent = "Unnamed note";
   }
-
-  textEL.setAttribute("href", `./edit.html#${note.id}`);
+  textEL.classList.add("list-item__title");
   noteEl.appendChild(textEL);
+
+  //Setup the link
+  noteEl.setAttribute("href", `./edit.html#${note.id}`);
+  noteEl.classList.add("list-item");
+
+  //Setup the status message
+  statusEl.textContent = generateLastEdited(note.updatedAt);
+  statusEl.classList.add("list-item__subtitle");
+  noteEl.appendChild(statusEl);
 
   return noteEl;
 };
@@ -92,17 +91,25 @@ const sortNotes = (notes, sortBy) => {
 
 //Render application notes
 const renderNotes = (notes, filters) => {
+  const notesEl = document.querySelector("#notes");
   notes = sortNotes(notes, filters.sortBy);
   const filteredNotes = notes.filter((note) =>
     note.title.toLowerCase().includes(filters.searchText.toLowerCase())
   );
 
-  document.querySelector("#notes").innerHTML = "";
+  notesEl.innerHTML = "";
 
-  filteredNotes.forEach((note) => {
-    const notEl = generateNoteDOM(note);
-    document.querySelector("#notes").appendChild(notEl);
-  });
+  if (filteredNotes.length > 0) {
+    filteredNotes.forEach((note) => {
+      const notEl = generateNoteDOM(note);
+      notesEl.appendChild(notEl);
+    });
+  } else {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.textContent = "No notes to show";
+    emptyMessage.classList.add("empty-message");
+    notesEl.appendChild(emptyMessage);
+  }
 };
 
 //Generate the last edited message
